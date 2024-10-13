@@ -139,9 +139,17 @@ const BookInfo = ({ book }: { book: IListing | undefined }) => {
           </div>
         </div>
         <div className="text-md border-l-2 pl-8 my-5">{book?.description}</div>
-        <h1 className="text-2xl font-bold mb-3">
-          Giá thuê: {formatCurrency(book?.leaseRate)}/ngày
-        </h1>
+        {book?.allowRent == 1 && (
+          <h1 className="text-2xl font-bold mb-3">
+            Giá thuê: {formatCurrency(book?.leaseRate)}/ngày
+          </h1>
+        )}
+        {book?.allowPurchase == 1 && (
+          <h1 className="text-2xl font-bold mb-3">
+            Giá mua: {formatCurrency(book?.price)}
+          </h1>
+        )}
+
         <div className="flex items-center gap-4">
           {book?.quantity == 0 ? (
             "Tạm thời hết sách"

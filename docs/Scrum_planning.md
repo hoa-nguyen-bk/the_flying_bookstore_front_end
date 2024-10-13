@@ -19,6 +19,7 @@
 Điều này cho thấy nhóm đã làm việc hiệu quả và quản lý được thời gian khá ok”. Qua đó mình đã tổng hợp lại gantt chart và burndown chart như sau
 (mở file gantt chart đồ ra)
 
+**Tôn Trọng Tín (Tech Lead)**:  oki bạn
 ---
 
 **Mai Thành Đạt (Scrum Master)**:  
@@ -88,6 +89,7 @@ Dựa trên các thông tin trên, chúng ta có thể xác định **Sprint Goa
 
 **Mai Thành Đạt (Scrum Master)**:  
 “Nếu mọi người đồng ý với Sprint Goal này, chúng ta có thể bắt đầu phân công công việc cụ thể cho từng task. Mọi người có ý kiến gì không?”
+**Tôn Trọng Tín (Tech Lead)**:  đã rõ
 Bây giờ, mình muốn hỏi ý kiến của **Tín** về việc mọi người đã nắm rõ các user story và tasks chưa. 
 
 
@@ -105,7 +107,7 @@ Bây giờ, mình muốn hỏi ý kiến của **Tín** về việc mọi ngư�
 (mở https://dev.azure.com/ahihi6174/The-Flying-Bookstore/_backlogs/backlog/The-Flying-Bookstore%20Team/Stories?showParents=false&System.IterationPath=The-Flying-Bookstore%5CSprint%202%20-%20t%C4%83ng%20t%E1%BB%91c)
 
 **Mai Thành Đạt (Scrum Master)**:  
-“Cảm ơn mọi người đã đồng ý với Sprint Goal. Bây giờ, chúng ta sẽ thảo luận về việc phân công công việc. Ai trong số các bạn muốn nhận những task này?”
+“Cảm ơn mọi người đã đồng ý với Sprint Goal. Bây giờ, các bạn dev sẽ chủ động chọn công việc. Ai trong số các bạn muốn xung phong nhận task này?”
 
 
 **Tôn Trọng Tín (Tech Lead)**:  
@@ -137,10 +139,11 @@ Bây giờ, mình muốn hỏi ý kiến của **Tín** về việc mọi ngư�
 - **Là khách, tôi có thể xem thông tin chi tiết của tài liệu**: Nhật - có 12 giờ và cam kết làm 11 giờ -  8 Story points
 - **Là khách, tôi có thể tìm kiếm tài liệu**: Phúc - có 12 giờ và cam kết làm 12 giờ -  8 story points
 
-Tổng cộng: **19 story points** cho ba thành viên.
+Tổng cộng: **story points là 19** cho ba thành viên.
 
-Với 3 người, khối lượng công việc khoảng 19 story points sẽ phù hợp với khả năng của chúng ta trong sprint này. Như vậy, chúng ta có thể tiếp tục phân công các task khác nếu cần thiết.”
+Với 3 người, khối lượng công việc khoảng story points là 19  sẽ phù hợp với khả năng của chúng ta trong sprint này. Như vậy, chúng ta có thể tiếp tục phân công các task khác nếu cần thiết.”
 
+**Tôn Trọng Tín (Tech Lead)**:  đã rõ
 ---
 
 **Mai Thành Đạt (Scrum Master)**:  

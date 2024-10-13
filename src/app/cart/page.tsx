@@ -9,11 +9,13 @@ import { useState } from "react";
 import { a11yProps } from "../../utils/helps";
 import CustomTabPanel from "../../components/order/CustomTabPanel";
 import CartItem from "../../components/cart/CartItem";
+import { useStoreStep } from "../../hooks/step";
 
 const Cart = () => {
-  const [tabNum, setTabNum] = useState<number>(1); //1 mua 0 thuê
+  const { changeTabNum, tabNum} = useStoreStep();
+  
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabNum(newValue);
+    changeTabNum(newValue);
   };
   const renderEmptyCard = () => {
     return (<div className="mx-auto text-center flex flex-col mt-5 items-center">
@@ -30,10 +32,10 @@ const Cart = () => {
   const renderInsideTab = ()=>{
     return ( <>
       <div className="w-2/3 lg:w-3/4 md:w-full mx-auto flex flex-col gap-5 mt-10">
-        <CartItem tabNum={tabNum} />
+        <CartItem />
       </div>
       <div className="mt-10 w-2/3 lg:w-3/4 md:w-full mx-auto">
-        <CartInfo tabNum={tabNum} />
+        <CartInfo/>
       </div>
     </>)
   }

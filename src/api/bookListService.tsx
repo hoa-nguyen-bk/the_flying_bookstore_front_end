@@ -34,7 +34,6 @@ const getAllBookService = async () => {
       url: `${port}/api/listing/search`,
       method: "GET",
       headers:{
-        "Referer": port,
         "Referrer-Policy": "unsafe-url" 
       },
       params:{

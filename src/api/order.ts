@@ -1,23 +1,23 @@
 import axios from "axios";
-import { IOrderStatus } from "../types/order";
+import { IOrder, IOrderStatus } from "../types/order";
 import { useAuthStore } from "@/hooks/user";
 import { IUser } from "../types/user";
 import { port } from "../utils/env";
+import { handleError } from "./handleError";
 
-export const getDetailOrder = async (orderId: number | null) => {
-  if (!orderId) return;
+export const getDetailOrder = async (orderId: number) => {
   return await axios
     .request({ url: `${port}/api/leaseOrder/` + orderId })
     .then((res) => res)
     .catch((error) => {
-      console.log(error);
+      return handleError(error);
     });
 };
 
 export const getAllOrder = async (userId: number, isCustomer?: boolean) => {
   return await axios
     .request({
-      url: `${port}/api/leaseOrder/search/${isCustomer ? `lessor` : `lessee`
+      url: `${port}/api/leaseOrder/search/${isCustomer ? `lessee` : `lessor`
         }/${userId}`,
     })
     .then((response) => {
@@ -27,7 +27,7 @@ export const getAllOrder = async (userId: number, isCustomer?: boolean) => {
       }
     })
     .catch((error) => {
-      console.log(error);
+      handleError(error)
     });
 };
 
@@ -42,14 +42,14 @@ export const updateStatusOrder = async (status: IOrderStatus, id: number, token:
     })
     .then((response) => { })
     .catch((error) => {
-      console.log(error);
+      handleError(error)
     });
 };
 
 export const getOrderWithStatusService = async (status: number, profile: IUser | null, isCustomer?: boolean) => {
   try {
     const response = await axios.request({
-      url: `${port}/api/leaseOrder/search/${isCustomer ? `lessor` : `lessee`
+      url: `${port}/api/leaseOrder/search/${isCustomer ?  `lessee` : `lessor`
         }/status/${profile?.id}`,
       params: {
         status,
@@ -58,6 +58,6 @@ export const getOrderWithStatusService = async (status: number, profile: IUser |
     return response.data;
   }
   catch (error) {
-    console.log(error);
+    handleError(error)
   };
 };

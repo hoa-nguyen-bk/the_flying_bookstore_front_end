@@ -20,6 +20,7 @@ import { InputListing } from "./InputListing";
 import GenreAutocomplete from "./GenreAutocomplete";
 import { useStoreAlert } from "../../hooks/alert";
 import { onCreateBook, getAllBooksService } from "@/api/create/createBookService";
+import { IPostState } from "../../types/params";
 
 const addBookDefault: IBook = {
   title: "Thêm mới sách",
@@ -35,17 +36,37 @@ const addBookDefault: IBook = {
 };
 const CreateBook = ({
   updateBookId,
+  post,
 }: {
-  updateBookId: (bookId: number | string | undefined) => void;
+  updateBookId: (bookId: IPostState["bookId"]) => void;
+  post: IPostState
 }) => {
   const [options, setOptions] = useState<readonly IBook[]>([addBookDefault]);
   const [open, setOpen] = useState(false);
-  const { callAlert , callErrorAlert} = useStoreAlert();
+  const { callAlert, callErrorAlert } = useStoreAlert();
   const methods = useForm<IBook>();
-  const { handleSubmit, getValues } = methods;
+  const { handleSubmit, getValues, setValue } = methods;
   const id = getValues("id");
 
   const loading = open && options.length === 0;
+
+
+  const handleBookSelection = (newValue: IBook | null) => {
+    const {
+      id, isbn = "", title = "", authors = [], languageCode = "", genre = [], publisher = "", publishedDate = "", pageCount = 0, size = "",
+    } = newValue || {};
+    setValue("isbn", isbn);
+    setValue("title", id == -1 ? "" : title);
+    setValue("authors", authors);
+    setValue("languageCode", languageCode);
+    setValue("genre", genre);
+    setValue("publisher", publisher);
+    setValue("publishedDate", publishedDate);
+    setValue("pageCount", pageCount);
+    setValue("size", size);
+    setValue("id", id);
+  }
+
   const onSubmit: SubmitHandler<IBook> = async (value) => {
     try {
       // Kiểm tra nếu sách đã tồn tại (ID hợp lệ)
@@ -53,7 +74,7 @@ const CreateBook = ({
         updateBookId(value.id);
         return callAlert("Chọn sách thành công");
       }
-  
+
       // Destructuring các giá trị từ form
       const {
         authors,
@@ -66,7 +87,7 @@ const CreateBook = ({
         size,
         title,
       } = value;
-  
+
       // Chuẩn bị dữ liệu để tạo sách
       const data = JSON.stringify({
         isbn,
@@ -79,10 +100,10 @@ const CreateBook = ({
         size,
         pageCount,
       });
-  
+
       // Gọi hàm onCreateBook để tạo sách
       const response = await onCreateBook(data);
-  
+
       // Kiểm tra kết quả trả về từ onCreateBook
       if (typeof response === 'string') {
         // Nếu có lỗi, gọi hàm callErrorAlert
@@ -91,7 +112,7 @@ const CreateBook = ({
         // Nếu thành công, cập nhật ID sách và hiển thị thông báo
         updateBookId(response.data.id);
         callAlert("Tạo sách thành công");
-      } 
+      }
     } catch (error) {
       // Xử lý lỗi không mong đợi trong quá trình xử lý
       console.error("Unexpected error during book submission:", error);
@@ -141,6 +162,7 @@ const CreateBook = ({
                   options={options}
                   setOpen={setOpen}
                   setOptions={setOptions}
+                  handleBookSelection={handleBookSelection}
                 />
               </Grid>
 

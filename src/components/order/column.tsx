@@ -1,4 +1,4 @@
-import { GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowParams } from "@mui/x-data-grid";
+import { GridActionsCellItem, GridActionsColDef, GridColDef, GridRenderCellParams, GridRowParams } from "@mui/x-data-grid";
 import { IOrder } from "../../types/order";
 import Link from "next/link";
 import dayjs from "dayjs";
@@ -36,8 +36,21 @@ export function convertToRow(order: IOrder): IRow {
   return row;
 }
 
+const actionColumn: GridActionsColDef<IRow> = {
+  field: "actions",
+  type: "actions",
+  width: 50,
+  getActions: (params: GridRowParams<IRow>) => [
+    <Link href={`/detail/${params?.row?.id}`} key="1">
+      <GridActionsCellItem
+        icon={<CiCircleInfo size={20} />}
+        label="Xem chi tiết"
+        size="large"
+      />
+    </Link>,],
+};
 // Example usage:
-export const columnsOrder: GridColDef<IRow>[] = [
+const columnsSame: GridColDef<IRow>[] = [
   { field: "id", headerName: "Id bài đăng", width: 90, sortable: false },
   {
     field: "title",
@@ -45,13 +58,16 @@ export const columnsOrder: GridColDef<IRow>[] = [
     minWidth: 150,
     sortable: false,
   },
+];
+export const columnsOrderRent: GridColDef<IRow>[] = [
+  ...columnsSame,
   {
     field: "duration",
     headerName: "Thời gian thuê",
     type: "number",
     sortable: false,
     width: 150,
-    valueGetter: (value: number) => value == 0 ? `1 ngày` : `${value} ngày`  ,
+    valueGetter: (value: number) => value == 0 ? `1 ngày` : `${value} ngày`,
   },
   {
     field: "deposit",
@@ -75,17 +91,28 @@ export const columnsOrder: GridColDef<IRow>[] = [
     type: "number",
     width: 150,
   },
+  actionColumn
+];
+export const columnsOrderSellBuy: GridColDef<IRow>[] = [
+  ...columnsSame,
   {
-    field: "actions",
-    type: "actions",
-    width: 50,
-    getActions: (params: GridRowParams<IRow>) => [
-      <Link href={`/detail/${params?.row?.id}`} key="1">
-        <GridActionsCellItem
-          icon={<CiCircleInfo size={20}/>}
-          label="Xem chi tiết"
-          size="large"
-        />
-      </Link>,],
+    field: "quantity",
+    headerName: "Số lượng",
+    type: "number",
+    valueGetter: () => "1",
+    sortable: false,
   },
+  {
+    field: "deposit",
+    headerName: "Giá gốc",
+    type: "number",
+    sortable: false,
+  },
+  {
+    field: "price",
+    headerName: "Giá bán",
+    type: "number",
+    sortable: false,
+  },
+  actionColumn
 ];

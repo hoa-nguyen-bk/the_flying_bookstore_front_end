@@ -11,11 +11,13 @@ const FindBookAutocomplete = ({
   options,
   open,
   setOpen,
+  handleBookSelection,
 }: {
   setOptions: Dispatch<SetStateAction<readonly IBook[]>>;
   options: readonly IBook[];
   setOpen: Dispatch<SetStateAction<boolean>>;
   open: boolean;
+  handleBookSelection: (newValue: IBook | null) => void
 }) => {
   const { control, setValue } = useFormContext();
   const loading = open && options.length === 0;
@@ -41,31 +43,7 @@ const FindBookAutocomplete = ({
           onClose={() => {
             setOpen(false);
           }}
-          onChange={(event: React.ChangeEvent<{}>, newValue: IBook | null) => {
-            props.field.onChange(event);
-            const {
-              id = null,
-              isbn = "",
-              title = "",
-              authors = "",
-              languageCode = "",
-              genre = [],
-              publisher = "",
-              publishedDate = "",
-              pageCount = 0,
-              size = "",
-            } = newValue || {};
-            setValue("isbn", isbn);
-            setValue("title", id == -1 ? "" : title);
-            setValue("authors", authors);
-            setValue("languageCode", languageCode);
-            setValue("genre", genre);
-            setValue("publisher", publisher);
-            setValue("publishedDate", publishedDate);
-            setValue("pageCount", pageCount);
-            setValue("size", size);
-            setValue("id", id);
-          }}
+          onChange={(_: React.ChangeEvent<{}>, newValue: IBook | null) => handleBookSelection(newValue)}
           isOptionEqualToValue={(option, value) => option.title === value.title}
           getOptionLabel={(option) => option.title}
           renderOption={(props, option) => {
@@ -121,3 +99,4 @@ const FindBookAutocomplete = ({
 };
 
 export default FindBookAutocomplete;
+

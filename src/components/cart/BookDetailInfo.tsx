@@ -17,8 +17,9 @@ const BookDetailInfo = ({book}:{book?: IListing,}) => {
         </Link>
         <p className="text-sm text-gray-500 ">{book?.book.authors}</p>
       </div>
-      <div className="basis-2/12 flex flex-col justify-center">
-        <p className="">Số lượng: 1</p>
+      <div className="basis-2/12 flex items-center ">
+        <p className="text-sm mr-3">Số lượng:</p>
+        <p className="text-sm text-gray-400">1</p>
       </div></>
   )
 }

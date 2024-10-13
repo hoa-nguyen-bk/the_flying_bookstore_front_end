@@ -14,6 +14,7 @@ import { IParamsVNpay } from "../../types/checkout";
 import { getDetailOrder, updateStatusOrder } from "../../api/order";
 import { useAuthStore } from "../../hooks/user";
 import { useStoreAlert } from "../../hooks/alert";
+import { useStoreStep } from "../../hooks/step";
 
 const Step2 = ({
   handleNext,
@@ -24,7 +25,8 @@ const Step2 = ({
   const [orderDetail, setOrderDetail] = useState<IOrder>();
   const { href: currentUrl } = useUrl() ?? {};
   const { token } = useAuthStore()
-  const { callAlert } = useStoreAlert(state => state);
+  const { tabNum } = useStoreStep();
+  const { callAlert, callErrorAlert } = useStoreAlert(state => state);
   const getOrder = async () => {
     if (!orderId || !token) return;
     return await updateStatusOrder(
@@ -45,27 +47,32 @@ const Step2 = ({
         return await updateStatusOrder("PAYMENT_SUCCESS", orderId, token).then(async () => {
           callAlert("Thanh toán thành công");
           return await getDetailOrder(orderId).then((response) => {
-            if (response?.data) {
+            if (typeof response != "string") {
               setOrderDetail(response.data);
+            } else {
+              callErrorAlert(response)
             }
           });
         });
       }
     };
     getStatusOrder();
-  }, [callAlert, currentUrl, orderId, token]);
+  }, [callAlert, callErrorAlert, currentUrl, orderId, token]);
 
   useEffect(() => {
     const getOrderApi = async () => {
+      if (!orderId) return;
       try {
         const response = await getDetailOrder(orderId);
-        if (response?.data) {
-          setOrderDetail(response.data);
+        if (typeof response != "string") {
+          setOrderDetail(response?.data);
+        } else {
+          callErrorAlert(response)
         }
       } catch (error) { }
     };
     getOrderApi();
-  }, [orderId]);
+  }, [callErrorAlert, orderId]);
 
   const renderAlert = (status?: IOrderStatus | undefined) => {
     if (!status) return <></>;
@@ -124,7 +131,7 @@ const Step2 = ({
             Tiếp tục mua sắm
           </Button>
         </Link>
-        <Link href="/my-order/0">
+        <Link href={tabNum == 1 ? "/buy-order" : "/my-order/0"}>
           <Button
             variant="outlined"
             sx={{ textTransform: "none" }}

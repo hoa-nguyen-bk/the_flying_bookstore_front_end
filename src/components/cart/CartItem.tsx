@@ -9,8 +9,11 @@ import { getBookDetailService } from "../../api/bookListService";
 import { IListing } from "../../types/book";
 import BookDetailInfo from "./BookDetailInfo";
 import { useStoreAlert } from "../../hooks/alert";
+import { useStoreStep } from "../../hooks/step";
 
-const CartItem = ({ tabNum, isCheckout = false }: { tabNum: number, isCheckout?: boolean }) => {
+const CartItem = ({ isCheckout = false }: { isCheckout?: boolean }) => {
+  const { tabNum } = useStoreStep();
+
   const { cart, removeCartBuy, removeCartRent } = useStoreCart();
   const [book, setBook] = useState<IListing>();
   const { callErrorAlert } = useStoreAlert(state => state);
@@ -38,28 +41,28 @@ const CartItem = ({ tabNum, isCheckout = false }: { tabNum: number, isCheckout?:
       <div className="basis-3/12 flex-1  flex flex-col justify-center">
         {tabNum === 1 ? (
           <div className="flex justify-between">
-            <p>Giá mua:</p>
-            <p>{formatCurrency(book?.price)}</p>
+            <p className="text-sm mr-8">Giá mua:</p>
+            <p className="text-sm text-gray-400">{formatCurrency(book?.price)}</p>
           </div>
         ) : (
           <>
             <div className="flex justify-between">
-              <p>Giá thuê:</p>
-              <p>{formatCurrency(book?.leaseRate)}/ngày</p>
+              <p className="text-sm mr-8">Giá thuê:</p>
+              <p className="text-sm text-gray-400">{formatCurrency(book?.leaseRate)}/ngày</p>
             </div>
-            <div className=" basis-1/5 flex justify-between text-gray-400 text-sm">
-              <p>Cọc:</p>
-              <p>{formatCurrency(book?.depositFee)}</p>
+            <div className=" basis-1/5 flex justify-between text-sm">
+              <p className="text-sm mr-8">Cọc:</p>
+              <p className="text-sm text-gray-400">{formatCurrency(book?.depositFee)}</p>
             </div>
           </>
         )}
       </div>
-      {isCheckout?(<></>): (<div className="basis-1/12 flex  items-center">
+      {isCheckout ? (<></>) : (<div className="basis-1/12 flex  items-center">
         <IconButton onClick={tabNum == 1 ? removeCartBuy : removeCartRent} aria-label="delete" size="large">
           <CiTrash />
         </IconButton>
       </div>)}
-      
+
     </div>
   );
 };

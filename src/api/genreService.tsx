@@ -8,7 +8,6 @@ const genreSliceService = async () => {
         url: `${port}/api/genre`, 
         headers: {
             "Referrer-Policy": "unsafe-url",
-            "Referer": port,
         },
     }).then(response => response.data)
         .catch(error => console.log(error));

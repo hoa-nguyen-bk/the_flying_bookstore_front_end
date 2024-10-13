@@ -23,7 +23,6 @@ import SearchBar from "./SearchBar";
 import { useStoreCart } from "@/hooks/cart";
 import { useAuthStore } from "@/hooks/user";
 import AlertSignOut from "./AlertSignOut";
-import { getAllOrder } from "../../api/order";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useStoreOrder } from "../../hooks/order";
@@ -173,10 +172,16 @@ export default function Navbar() {
       MenuListProps={{ "aria-labelledby": "order-button" }}
     >
       <Link href={"/my-order/0"}>
-        <MenuItem onClick={handleCloseMenuOrder}>Đơn hàng của tôi</MenuItem>
+        <MenuItem onClick={handleCloseMenuOrder}>Đơn thuê</MenuItem>
       </Link>
       <Link href={"/customer-order"}>
-        <MenuItem onClick={handleCloseMenuOrder}>Đơn hàng của khách</MenuItem>
+        <MenuItem onClick={handleCloseMenuOrder}>Đơn cho thuê</MenuItem>
+      </Link>
+      <Link href={"/buy-order"}>
+        <MenuItem onClick={handleCloseMenuOrder}>Đơn mua</MenuItem>
+      </Link>
+      <Link href={"/sell-order"}>
+        <MenuItem onClick={handleCloseMenuOrder}>Đơn bán</MenuItem>
       </Link>
     </Menu>
   );

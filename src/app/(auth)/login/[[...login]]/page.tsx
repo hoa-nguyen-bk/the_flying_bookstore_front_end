@@ -42,7 +42,6 @@ const Login = () => {
         callErrorAlert(data);
       }
     } catch (error: unknown) {
-      console.error("Lỗi không xác định:", error);
       callErrorAlert("Đã xảy ra lỗi không xác định. Vui lòng thử lại.");
     }
   };

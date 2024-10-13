@@ -21,14 +21,13 @@ import { useEffect, useMemo, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Image from "next/image";
 import NoImage from "./../../assets/images/noimg.png";
-import { useStaticPicker } from "@mui/x-date-pickers/internals";
-import axios, { AxiosProgressEvent } from "axios";
 import { Accordion, AccordionSummary } from "./AccordionCustom";
-import { IPostState } from "../../app/(manager)/manager-post/add-post/page";
 import { useAuthStore } from "../../hooks/user";
 import { useStoreAlert } from "../../hooks/alert";
-import { onCreateCopy, uploadFileService } from "@/api/create/createDocumentService";
 import Link from "next/link";
+import { handleError } from "../../api/handleError";
+import { onCreateCopy, uploadFileService } from "../../api/create/createDocumentService";
+import { IPostState } from "../../types/params";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -62,39 +61,47 @@ const CreateDocument = ({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [imgUrl, setImgUrl] = useState<string>();
   const { profile } = useAuthStore();
-  const { callAlert } = useStoreAlert()
-  const handleFileUpload = (event: any) => {
+  const { callAlert, callErrorAlert } = useStoreAlert()
+
+  const uploadFile = async (formData: FormData) => {
+    try {
+      const response = await uploadFileService(formData, setUploadProgress);
+      if (typeof response == "string") {
+        callErrorAlert(response);
+      } else if (response && response?.data?.display_url) {
+        setImgUrl(response?.data?.display_url);
+      }
+    } catch (error) {
+      callErrorAlert(handleError(error))
+    }
+  }
+
+  const resetStatus = () => {
     if (uploadProgress == 100 || imgUrl !== "") {
       setImgUrl("");
       setUploadProgress(0);
     }
+  }
 
-    console.log(event.target.files[0], "bebe");
-
+  const handleFileUpload = async (event: any) => {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append("image", file);
-    console.log({ formData });
-    const uploadFile = async () => {
-      const response = await uploadFileService(formData, setUploadProgress);
-      if (response) {
-        if (response?.data?.display_url) {
-          console.log(response?.data?.display_url);
-          setImgUrl(response?.data?.display_url);
-        }
-      }
-      else {
-        console.log(response?.error);
-      }
+    try {
+      return await uploadFile(formData);
+    } catch (error: unknown) {
+      callErrorAlert(handleError(error))
     }
-
-    uploadFile();
   };
 
   const onSubmit: SubmitHandler<TFieldDocumentValue> = async (value) => {
+    if(!profile || !profile?.id) {
+      callErrorAlert("Bạn chưa đăng nhập");
+      return;
+    };
     let data = ({
       bookId,
-      ownerId: profile?.id,
+      ownerId: profile.id,
       quantity: 1,
       imageLink: imgUrl,
       damagePercent: parseFloat(value.damagePercent),
@@ -102,15 +109,18 @@ const CreateDocument = ({
       deletedDate: "",
       copyStatus: "UNLISTED",
     });
-    console.log({ data });
+    try {
 
-    const response = await onCreateCopy(data);
-    if (response) {
-      console.log(JSON.stringify(response.data));
-      updateDocumentId(response.data.id)
-      callAlert(`Tạo tài liệu #${response.data.id} thành công`)
+      const response = await onCreateCopy(data);
+      if (typeof response != "string" ) {
+        updateDocumentId(response.data.id)
+        callAlert(`Tạo tài liệu #${response.data.id} thành công`)
+      } else {
+        callErrorAlert(response)
+      }
+    } catch (error) {
+      callErrorAlert(handleError(error))
     }
-    else console.log(response.error);
   }
 
   return (
@@ -145,7 +155,7 @@ const CreateDocument = ({
               alignContent: "flex-end",
               height: "full-height"
             }}>
-              <Typography variant="body1" gutterBottom>Đọc về phần trăm hư hại sách <Link href={`/book-condition-guide`}><span className="text-primary font-semibold"> tại đây</span></Link></Typography>
+              <Typography variant="body1" gutterBottom>Đọc về phần trăm hư hại sách <Link href={`/book-condition-guide`} target="_blank"><span className="text-primary font-semibold"> tại đây</span></Link></Typography>
             </Grid>
             <Grid item xs={12}>
               <Button
@@ -153,9 +163,10 @@ const CreateDocument = ({
                 role={undefined}
                 variant="contained"
                 tabIndex={-1}
+                onClick={resetStatus}
                 startIcon={<CloudUploadIcon />}
               >
-                Upload file
+                Tải hình ảnh
                 <VisuallyHiddenInput
                   onChange={handleFileUpload}
                   type="file"
@@ -169,7 +180,7 @@ const CreateDocument = ({
             <Grid item xs={12}>
               <div className="relative w-full h-52 border rounded-lg">
                 <Image
-                  src={imgUrl || NoImage}
+                  src={imgUrl ? imgUrl : NoImage}
                   alt="img"
                   sizes="52"
                   fill

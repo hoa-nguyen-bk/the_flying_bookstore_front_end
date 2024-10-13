@@ -16,11 +16,11 @@ import { ICart, ICartRent, IFormValueDayRent } from "@/types/cart";
 import { useStoreCart } from "@/hooks/cart";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../hooks/user";
+import { useStoreStep } from "../../hooks/step";
 
 const tomorrow = dayjs().add(1, "day");
 const RentDay = ({ book }: IPropsBook) => {
-  console.log({book});
-  
+  const { changeTabNum } = useStoreStep();
   const { handleSubmit, control, watch } = useForm<IFormValueDayRent>({
     defaultValues: {
       dateStart: dayjs(),
@@ -58,7 +58,7 @@ const RentDay = ({ book }: IPropsBook) => {
       totalRent: renderTotalRent(),
       duration: renderDurationRent(),
     };
-
+    changeTabNum(0)
     addToCart(submitCart);
     router.push("/cart");
   };

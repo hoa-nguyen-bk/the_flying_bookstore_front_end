@@ -15,11 +15,11 @@ const page = () => {
       <p className="text-base">Không có tiêu chuẩn chung nào cho việc phân loại tình trạng sách, nhưng hầu hết các nhà bán sách đều sử dụng một số thuật ngữ sau:</p>
 
       <ul>
-        <li><strong>Mới:</strong> Cuốn sách chưa từng được đọc và trông giống như vừa xuất xưởng từ nhà xuất bản.</li>
-        <li><strong>Như mới:</strong> Sách có tình trạng giống hệt như khi được xuất bản. Không có khuyết điểm, không có dấu hiệu hao mòn hay hư hại. Có thể có hoặc không có bìa áo, tùy thuộc vào cách cuốn sách được in ban đầu. Các vật liệu đi kèm như bìa cứng, mã truy cập, đồ chơi có thể bị thiếu nếu không có ghi chú đặc biệt trong mô tả.</li>
-        <li><strong>Tốt:</strong> Cuốn sách gần như mới nhưng có thể có một số khuyết điểm nhỏ, chẳng hạn như mờ nhạt nhẹ ở bìa hoặc gáy. Không có rách, vết bẩn hoặc dấu vết.</li>
-        <li><strong>Rất tốt:</strong> Sách có một số dấu hiệu hao mòn, nhưng vẫn ở tình trạng tốt. Có thể có một số khuyết điểm nhỏ như vết rách nhỏ, vết nhăn, hoặc dấu vết trên bìa, gáy hoặc trang sách.</li>
-        <li><strong>Chấp nhận được:</strong> Sách đã qua sử dụng khá nhiều, với những dấu hiệu hao mòn rõ rệt như trầy xước, vết lõm và các góc bị mòn. Tuy nhiên, nội dung vẫn có thể đọc được, và không có trang nào bị thiếu.</li>
+        <li><strong>Mới - hư hại 0%:</strong> Cuốn sách chưa từng được đọc và trông giống như vừa xuất xưởng từ nhà xuất bản.</li>
+        <li><strong>Như mới - hư hại 10%:</strong> Sách có tình trạng giống hệt như khi được xuất bản. Không có khuyết điểm, không có dấu hiệu hao mòn hay hư hại. Có thể có hoặc không có bìa áo, tùy thuộc vào cách cuốn sách được in ban đầu. Các vật liệu đi kèm như bìa cứng, mã truy cập, đồ chơi có thể bị thiếu nếu không có ghi chú đặc biệt trong mô tả.</li>
+        <li><strong>Rất tốt - hư hại 20%:</strong> Cuốn sách gần như mới nhưng có thể có một số khuyết điểm nhỏ, chẳng hạn như mờ nhạt nhẹ ở bìa hoặc gáy. Không có rách, vết bẩn hoặc dấu vết.</li>
+        <li><strong>Tốt - hư hại 30%:</strong> Sách có một số dấu hiệu hao mòn, nhưng vẫn ở tình trạng tốt. Có thể có một số khuyết điểm nhỏ như vết rách nhỏ, vết nhăn, hoặc dấu vết trên bìa, gáy hoặc trang sách.</li>
+        <li><strong>Chấp nhận được - hư hại hơn 30%:</strong> Sách đã qua sử dụng khá nhiều, với những dấu hiệu hao mòn rõ rệt như trầy xước, vết lõm và các góc bị mòn. Tuy nhiên, nội dung vẫn có thể đọc được, và không có trang nào bị thiếu.</li>
       </ul>
 
       <h2 className="text-xl mt-5 font-semibold">Tình trạng sách và giá cả</h2>

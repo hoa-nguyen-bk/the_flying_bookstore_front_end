@@ -21,7 +21,10 @@ const SearchedBook = ({ book }: { book: IListing }) => {
           {book?.book?.title}
         </h3>
         <div className="flex justify-between items-center">
-          <p className="text-sm text-gray-500">{`${formatCurrency(book?.leaseRate)}/ngày`||"Không hợp lệ "}</p>
+          <div>
+            {book?.copy?.allow_rent == 1 && (<p className="text-sm text-gray-500">Thuê: {`${formatCurrency(book?.leaseRate)}/ngày` || "Không hợp lệ "}</p>)}
+            {book?.copy?.allow_purchase == 1 && (<p className="text-sm text-gray-500">Mua: {`${formatCurrency(book?.price)}` || "Không hợp lệ "}</p>)}
+          </div>
           <CiShoppingCart className="text-2xl mx-3" />
         </div>
       </div>

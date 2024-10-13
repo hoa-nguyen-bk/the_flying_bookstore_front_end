@@ -1,5 +1,11 @@
 import { IListing, IReview } from "./book";
 import { IUser } from "./user";
+export enum OrderType {
+  Buy = "mua",
+  Sell = "bán",
+  Leasor = "cho thuê",
+  Leasee = "thuê",
+}
 
 interface ILeaseOrderDetail {
   id: number;

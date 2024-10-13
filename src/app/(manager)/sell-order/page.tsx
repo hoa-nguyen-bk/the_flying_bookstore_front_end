@@ -4,9 +4,10 @@ import ListOrderMain from "../../../components/customerOrder/ListOrderMain";
 import { OrderType } from "../../../types/order";
 
 export const metadata: Metadata={
-  title: `Đơn ${OrderType.Leasor} | ${SITE_NAME}`,
+  title: `Quản lý đơn ${OrderType.Sell} | ${SITE_NAME}`,
 }
-const CustomerOrder = () => {
-  return <ListOrderMain orderType={OrderType.Leasor} />;
+
+const page = () => {
+  return <ListOrderMain orderType={OrderType.Sell} />;
 };
-export default CustomerOrder;
+export default page;

@@ -8,15 +8,15 @@ import "./Cart.scss"
 import InfoCheckout from "./InfoCheckout";
 import { useStoreAlert } from "../../hooks/alert";
 
-const CartInfo = ({ tabNum }: { tabNum: number }) => {
+const CartInfo = () => {
   const router = useRouter();
   const { isLogin } = useAuthStore();
-  const { resetStep } = useStoreStep()
+  const { resetStep, tabNum } = useStoreStep()
   const { callErrorAlert } = useStoreAlert();
 
   const onClickNavigate = () => {
     if (isLogin) {
-      resetStep(tabNum);
+      resetStep();
       router.push("/checkout");
     } else {
       callErrorAlert("Bạn cần đăng nhập trước");
@@ -28,7 +28,7 @@ const CartInfo = ({ tabNum }: { tabNum: number }) => {
     <div className="border py-8 px-8 rounded-lg">
       <h3 className="text-xl font-semibold">Thông tin đặt hàng</h3>
       <div className="columns-2 gap-10 my-4">
-        <InfoCheckout tabNum={tabNum} />
+        <InfoCheckout />
       </div>
       <div className="flex justify-center">
         <Button

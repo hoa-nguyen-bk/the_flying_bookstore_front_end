@@ -6,10 +6,10 @@ import PromoteSection from "@/components/home/PromoteSection";
 import { IListing } from "@/types/book";
 import { useEffect, useState } from "react";
 import { getBookDetailService } from "@/api/bookListService";
-import { IParams } from "@/types/params";
+import { IParamsDetail } from "@/types/params";
 import { useStoreAlert } from "../../../hooks/alert";
 
-export default function Page({ params }: IParams) {
+export default function Page({ params }: IParamsDetail) {
   const [listing, setListing] = useState<IListing>();
   const { callErrorAlert } = useStoreAlert(state => state);
   useEffect(() => {

@@ -45,8 +45,8 @@ function formatPhoneNumber(phoneNumber: string | undefined) {
   return phoneNumber.replace(/(\d{1})(\d{3})(\d{3})(\d{3})/, "$1$2 $3 $4");
 }
 const calPercentPromotion = (book: IListing | undefined): number => {
-  if (!book) return 0;
-  return Math.round(100-book.price * 100 / book.depositFee);
+  if (!book || book.price === undefined) return 0;
+  return Math.round(100 - (book.price * 100) / book.depositFee);
 }
 function a11yProps(index: number) {
   return {

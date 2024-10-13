@@ -11,8 +11,11 @@ import { formatCurrency, formatPhoneNumber } from '../../utils/helps'
 import { useStoreCart } from '../../hooks/cart'
 import { getBookDetailService } from '../../api/bookListService'
 import { useStoreAlert } from '../../hooks/alert'
+import { useStoreStep } from '../../hooks/step'
 
-const InfoCheckout = ({ tabNum }: { tabNum: number }) => {
+const InfoCheckout = () => {
+  const { tabNum } = useStoreStep();
+  
   const cart = useStoreCart(state => state.cart);
   const {  callErrorAlert} = useStoreAlert();
   const [book, setBook] = useState<IListing>();

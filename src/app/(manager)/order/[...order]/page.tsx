@@ -4,23 +4,25 @@ import Order from "../../../../components/checkout/Order";
 import { IOrder } from "../../../../types/order";
 import { getDetailOrder } from "../../../../api/order";
 import { useEffect, useState } from "react";
+import useApiCall from "../../../../hooks/useApiCall";
+import Loading from "../../../loading";
 
 const Page = ({ params }: { params: { order: string } }) => {
-  const [orderDetail, setOrderDetail] = useState<IOrder>();
-  console.log({ params });
+  const [orderDetail, setOrderDetail] = useState<IOrder | undefined>();
+  const { handleApiCall, loading } = useApiCall();
 
   useEffect(() => {
-    const getOrderApi = async () => {
-      if (!params?.order) return;
-      try {
-        const response = await getDetailOrder(parseInt(params?.order));
-        if (response?.data) {
-          setOrderDetail(response.data);
-        }
-      } catch (error) {}
+    if (!params?.order) return;
+    const fetchOrderDetail = async () => {
+      await handleApiCall(
+        () => getDetailOrder(parseInt(params?.order)),
+        (response: any) => setOrderDetail(response?.data as IOrder),
+        "Lấy đơn hàng thành công",
+      );
     };
-    getOrderApi();
-  }, [params?.order]);
+    fetchOrderDetail();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -28,7 +30,7 @@ const Page = ({ params }: { params: { order: string } }) => {
         <h3 className="text-center text-primary text-2xl font-semibold text-primary mb-6">
           Chi tiết đơn hàng #{params?.order}
         </h3>
-        {orderDetail ? (
+        {loading ? <Loading /> : orderDetail ? (
           <Order orderDetail={orderDetail} />
         ) : (
           <>Không có đơn hàng</>

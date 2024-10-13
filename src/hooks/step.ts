@@ -5,7 +5,8 @@ interface IStoreStep {
   step: number;
   tabNum: number;
   changeStep: (newStep: number) => void;
-  resetStep: (tabNum: number) => void;
+  changeTabNum:(tabNum:number)=>void;
+  resetStep: () => void;
 }
 const stepSlice: StateCreator<IStoreStep, [["zustand/persist", unknown]]> = (
   set
@@ -15,7 +16,8 @@ const stepSlice: StateCreator<IStoreStep, [["zustand/persist", unknown]]> = (
   changeStep: (newStep) => {
     set(() => ({ step: newStep }));
   },
-  resetStep: (tabNum) => set(() => ({ step: 0, tabNum }))
+  changeTabNum:(tabNum)=>set(()=>({tabNum})),
+  resetStep: () => set(() => ({ step: 0 }))
 });
 export const useStoreStep = create<IStoreStep>()(
   persist(stepSlice, {

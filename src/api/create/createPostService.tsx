@@ -1,8 +1,8 @@
 import axios from "axios";
 import { port } from "../../utils/env";
+import { handleError } from "../handleError";
 
-
-const onCreateListing = async (data: any, token: string | null) => {
+const onCreateListing = async (data: any, token: string) => {
     try {
         const respone = await axios.request({
             method: "POST",
@@ -14,10 +14,11 @@ const onCreateListing = async (data: any, token: string | null) => {
             },
             data,
         });
-        return respone.data;
+        return respone;
     }
     catch (error) {
-        console.log(error);
+        return handleError(error)
     };
 };
+
 export { onCreateListing }

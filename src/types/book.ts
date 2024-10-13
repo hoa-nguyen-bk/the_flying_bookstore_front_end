@@ -17,9 +17,9 @@ export type IListing = {
   bookOwned?: number;
   bookLeasing?: number;
   user: IUser;
-  price: number;
-  allow_rent: boolean;
-  allow_purchase: boolean;
+  price?: number;
+  allowRent?: number;
+  allowPurchase?: number;
 };
 
 export interface ICopy {
@@ -33,7 +33,8 @@ export interface ICopy {
   updatedDate: string | null;
   deletedDate: string | null;
   copyStatus: "LEASED" | "AVAILABLE"; // Assuming these are the only possible values for copy status
-  
+  allow_purchase: number;
+  allow_rent: number;
 }
 export type IBook = {
   id?: number;

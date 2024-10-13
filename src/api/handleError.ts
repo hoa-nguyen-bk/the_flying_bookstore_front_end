@@ -15,7 +15,7 @@ const handleError = (error:unknown)=> {
     }
   } else if (error instanceof Error) {
     // Trường hợp các lỗi khác (ví dụ: lỗi runtime, cú pháp, etc.)
-    console.error("General error:", error.message);
+    console.error("General error:", error);
     return "Lỗi không xác định: " + error.message;
   } else {
     // Fallback cho trường hợp lỗi không rõ kiểu

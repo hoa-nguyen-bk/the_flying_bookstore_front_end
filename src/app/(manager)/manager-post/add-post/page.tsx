@@ -4,11 +4,8 @@ import { Typography } from "@mui/material";
 import CreateBook from "@/components/createPost/CreateBook";
 import CreateDocument from "@/components/createPost/CreateDocument";
 import CreatePost from "@/components/createPost/CreatePost";
-export interface IPostState {
-  bookId: number | string | undefined;
-  copyId: string | undefined;
-  postId: string | undefined;
-}
+import { IPostState } from "../../../../types/params";
+
 const AddPost = () => {
   const [post, setPost] = useState<IPostState>({
     bookId: undefined,
@@ -26,7 +23,7 @@ const AddPost = () => {
         Đăng bài mới
       </Typography>
 
-      <CreateBook updateBookId={updateBookId} />
+      <CreateBook  post={post}  updateBookId={updateBookId} />
       <CreateDocument
         bookId={post.bookId}
         updateDocumentId={updateDocumentId}
