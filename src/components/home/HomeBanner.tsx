@@ -1,5 +1,7 @@
 "use-client";
 import Slider from "react-slick";
+import AboutPage from "./HeroSection/AboutSection";
+import PromotionSection from "./HeroSection/PromotionSection";
 import HeroSection from "./HeroSection/HeroSection";
 export default function HomeBanner() {
   const settings = {
@@ -12,14 +14,14 @@ export default function HomeBanner() {
   return (
     <div className="overflow-hidden">
       <Slider {...settings}>
+      <div className="banner" id="banner0">
+          <AboutPage />
+        </div>
         <div className="banner" id="banner1">
           <HeroSection />
         </div>
         <div className="banner" id="banner2">
-          <HeroSection />
-        </div>
-        <div className="banner" id="banner3">
-          <HeroSection />
+          <PromotionSection />
         </div>
       </Slider>
     </div>
