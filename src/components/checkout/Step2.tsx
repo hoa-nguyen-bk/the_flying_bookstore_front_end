@@ -46,47 +46,16 @@ const Step2 = ({
       const params: IParamsVNpay = parseUrlParams(currentUrl);
       if (params.vnp_TransactionStatus == "00" && rentOrderId) {
         // gọi api thay đổi trạng thái đơn hàng ở đây
-        try {
-          await updateStatusOrder("PAYMENT_SUCCESS", rentOrderId, token);
-
+        return await updateStatusOrder("PAYMENT_SUCCESS", rentOrderId, token).then(async () => {
           callAlert("Thanh toán thành công");
-
-          const response = await getDetailRentOrder(rentOrderId);
-
-          if (typeof response !== "string") {
-            const orderData = response.data;
-            setOrderDetail(orderData);
-
-            const orderEmailPayload = {
-              id: orderData?.leaseOrder?.id ?? 0,
-              lessorName: `${orderData?.lessor?.lastName ?? ""} ${orderData?.lessor?.firstName ?? ""}`,
-              phoneNumber: orderData?.lessor?.phoneNumber ?? "",
-              lessorAddress: orderData?.leaseOrder?.lessorAddress ?? "",
-              createdDate: orderData?.leaseOrder?.createdDate ?? "",
-              fromDate: orderData?.leaseOrder?.fromDate ?? "",
-              toDate: orderData?.leaseOrder?.toDate ?? "",
-              duration: (() => {
-                const firstDayEnd = orderData?.leaseOrder?.toDate;
-                const dateStart = orderData?.leaseOrder?.fromDate;
-                const dateEnd = dayjs(firstDayEnd).add(1, "day");
-                if (!dateStart || !dateEnd) return 0;
-                const duration = dateEnd.diff(dateStart, "day");
-                return duration > 0 ? duration : 0;
-              })(),
-              paymentMethod: renderPayment(orderData?.leaseOrder?.paymentMethod) ?? "",
-              totalLeaseFee: orderData?.leaseOrder?.totalLeaseFee ?? 0,
-              totalDeposit: orderData?.leaseOrder?.totalDeposit ?? 0,
-              buyerEmail: profile?.email ?? ""
-            };
-
-            await sendReceiptEmail(orderEmailPayload);
-
-          } else {
-            callErrorAlert(response);
-          }
-        } catch (error) {
-          console.error("Error during payment confirmation:", error);
-        }
+          return await getDetailRentOrder(rentOrderId).then((response) => {
+            if (typeof response != "string") {
+              setOrderDetail(response.data);
+            } else {
+              callErrorAlert(response)
+            }
+          });
+        });
       }
     };
     getStatusOrder();
@@ -184,6 +153,50 @@ const Step2 = ({
         >
           Xác nhận lấy hàng
         </Button>
+
+        {orderDetail?.leaseOrder?.status === "PAYMENT_SUCCESS" && (
+          <Button
+            variant="outlined"
+            sx={{ textTransform: "none" }}
+            size="large"
+            onClick={async () => {
+              if (!orderDetail) return;
+
+              const orderEmailPayload = {
+                id: orderDetail?.leaseOrder?.id ?? 0,
+                lessorName: `${orderDetail?.lessor?.lastName ?? ""} ${orderDetail?.lessor?.firstName ?? ""}`,
+                phoneNumber: orderDetail?.lessor?.phoneNumber ?? "",
+                lessorAddress: orderDetail?.leaseOrder?.lessorAddress ?? "",
+                createdDate: orderDetail?.leaseOrder?.createdDate ?? "",
+                fromDate: orderDetail?.leaseOrder?.fromDate ?? "",
+                toDate: orderDetail?.leaseOrder?.toDate ?? "",
+                duration: (() => {
+                  const firstDayEnd = orderDetail?.leaseOrder?.toDate;
+                  const dateStart = orderDetail?.leaseOrder?.fromDate;
+                  const dateEnd = dayjs(firstDayEnd).add(1, "day");
+                  if (!dateStart || !dateEnd) return 0;
+                  const duration = dateEnd.diff(dateStart, "day");
+                  return duration > 0 ? duration : 0;
+                })(),
+                paymentMethod: orderDetail?.leaseOrder?.paymentMethod ?? "",
+                totalLeaseFee: orderDetail?.leaseOrder?.totalLeaseFee ?? 0,
+                totalDeposit: orderDetail?.leaseOrder?.totalDeposit ?? 0,
+                buyerEmail: profile?.email ?? ""
+              };
+              console.log(orderEmailPayload);
+
+              try {
+                await sendReceiptEmail(orderEmailPayload);
+                console.log(orderEmailPayload);
+                callAlert("Đã gửi biên lai điện tử qua email thành công!");
+              } catch (error) {
+                callErrorAlert("Gửi email thất bại!");
+              }
+            }}
+          >
+            Gửi biên lai qua email
+          </Button>
+        )}
       </div>
     </>
   );
