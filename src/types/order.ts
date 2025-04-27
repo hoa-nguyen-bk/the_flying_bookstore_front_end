@@ -158,3 +158,18 @@ export const orderStakeholderTitles: Record<OrderType, string> = {
   [OrderType.Leasee]: orderUserTitles[OrderType.Leasor],
   [OrderType.Leasor]: orderUserTitles[OrderType.Leasee],
 };
+
+export interface IOrderEmail {
+  id: number;
+  lessorName: string;
+  phoneNumber: string;
+  lessorAddress: string;
+  createdDate: string;
+  fromDate: string;
+  toDate: string;
+  duration: number;
+  paymentMethod: string;
+  totalLeaseFee: number;
+  totalDeposit: number;
+  buyerEmail: string;
+};

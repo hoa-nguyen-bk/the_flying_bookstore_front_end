@@ -15,6 +15,8 @@ import { getDetailRentOrder, updateStatusOrder } from "../../api/order";
 import { useAuthStore } from "../../hooks/user";
 import { useStoreAlert } from "../../hooks/alert";
 import { useStoreStep } from "../../hooks/step";
+import dayjs from "dayjs";
+import { sendReceiptEmail } from "@/api/email";
 
 const Step2 = ({
   handleNext,
@@ -24,7 +26,7 @@ const Step2 = ({
   const { rentOrderId } = useStoreOrder();
   const [orderDetail, setOrderDetail] = useState<IRentOrder>();
   const { href: currentUrl } = useUrl() ?? {};
-  const { token } = useAuthStore()
+  const { token, profile } = useAuthStore()
   const { tabNum } = useStoreStep();
   const { callAlert, callErrorAlert } = useStoreAlert(state => state);
   const getOrder = async () => {
@@ -44,16 +46,47 @@ const Step2 = ({
       const params: IParamsVNpay = parseUrlParams(currentUrl);
       if (params.vnp_TransactionStatus == "00" && rentOrderId) {
         // gọi api thay đổi trạng thái đơn hàng ở đây
-        return await updateStatusOrder("PAYMENT_SUCCESS", rentOrderId, token).then(async () => {
+        try {
+          await updateStatusOrder("PAYMENT_SUCCESS", rentOrderId, token);
+
           callAlert("Thanh toán thành công");
-          return await getDetailRentOrder(rentOrderId).then((response) => {
-            if (typeof response != "string") {
-              setOrderDetail(response.data);
-            } else {
-              callErrorAlert(response)
-            }
-          });
-        });
+
+          const response = await getDetailRentOrder(rentOrderId);
+
+          if (typeof response !== "string") {
+            const orderData = response.data;
+            setOrderDetail(orderData);
+
+            const orderEmailPayload = {
+              id: orderData?.leaseOrder?.id ?? 0,
+              lessorName: `${orderData?.lessor?.lastName ?? ""} ${orderData?.lessor?.firstName ?? ""}`,
+              phoneNumber: orderData?.lessor?.phoneNumber ?? "",
+              lessorAddress: orderData?.leaseOrder?.lessorAddress ?? "",
+              createdDate: orderData?.leaseOrder?.createdDate ?? "",
+              fromDate: orderData?.leaseOrder?.fromDate ?? "",
+              toDate: orderData?.leaseOrder?.toDate ?? "",
+              duration: (() => {
+                const firstDayEnd = orderData?.leaseOrder?.toDate;
+                const dateStart = orderData?.leaseOrder?.fromDate;
+                const dateEnd = dayjs(firstDayEnd).add(1, "day");
+                if (!dateStart || !dateEnd) return 0;
+                const duration = dateEnd.diff(dateStart, "day");
+                return duration > 0 ? duration : 0;
+              })(),
+              paymentMethod: renderPayment(orderData?.leaseOrder?.paymentMethod) ?? "",
+              totalLeaseFee: orderData?.leaseOrder?.totalLeaseFee ?? 0,
+              totalDeposit: orderData?.leaseOrder?.totalDeposit ?? 0,
+              buyerEmail: profile?.email ?? ""
+            };
+
+            await sendReceiptEmail(orderEmailPayload);
+
+          } else {
+            callErrorAlert(response);
+          }
+        } catch (error) {
+          console.error("Error during payment confirmation:", error);
+        }
       }
     };
     getStatusOrder();
