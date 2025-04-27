@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Backdrop, Box, Button } from "@mui/material";
 import InfoRent from "./InfoRent";
 import Pay from "./Pay";
 import "./Step.scss";
@@ -9,7 +9,7 @@ import { IFormCheckout } from "@/types/form";
 import dayjs from "dayjs";
 // import { VNPay } from "vnpay";
 import { useStoreCart } from "@/hooks/cart";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useStoreOrder } from "../../hooks/order";
 import { getProfile, onSubmitProfile } from "../../api/profile";
@@ -21,6 +21,8 @@ import { useStoreStep } from "../../hooks/step";
 import ListVoucherShop from "../cart/voucherShop/ListVoucherShop";
 import ListVoucher from "../cart/voucherSession/ListVoucher";
 import { useStoreVoucher } from "../../hooks/voucher";
+import { checkVNPayPayment, createVNPayPayment } from "@/api/order";
+import Loading from "@/app/loading";
 
 // const vnpay = new VNPay({
 //   tmnCode: process.env.TMN_CODE || "",
@@ -48,7 +50,9 @@ const Step1 = ({ handleNext }: { handleNext: () => void }) => {
   const { cart } = useStoreCart();
   const [payType, setPayType] = useState<number>(0);
   const methods = useForm<IFormCheckout>();
-  const { voucherShop,voucher } = useStoreVoucher();
+  const { voucherShop, voucher } = useStoreVoucher();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const {
     handleSubmit,
@@ -82,8 +86,8 @@ const Step1 = ({ handleNext }: { handleNext: () => void }) => {
       VoucherShopId: voucherShop?.id,
       VoucherSessionId: voucher?.id
     };
-    console.log({convertValue});
-    
+    console.log({ convertValue });
+
     const response = await onSubmitOrderBuyService(convertValue, token);
     if (typeof response != "string") {
       callAlert("Tạo đơn hàng mua thành công");
@@ -93,6 +97,65 @@ const Step1 = ({ handleNext }: { handleNext: () => void }) => {
       callErrorAlert(response)
     }
   }
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const vnp_Amount = searchParams.get("vnp_Amount") || "";
+    const vnp_TransactionNo = searchParams.get("vnp_TransactionNo") || "";
+    const vnp_TransactionStatus = searchParams.get("vnp_TransactionStatus") || "";
+
+    const handleCheckPayment = async () => {
+      setLoading(true);
+      try {
+        const response = await checkVNPayPayment({
+          vnp_Amount,
+          vnp_TransactionNo,
+          vnp_TransactionStatus,
+        });
+
+        if (response.data === "ordersuccess") {
+          callAlert("Xác nhận thanh toán qua VNPAY thành công!");
+          handleNext();
+        } else {
+          callErrorAlert("Giao dịch qua VNPAY thất bại. Vui lòng thử lại sau.");
+          router.push("/checkout");
+        }
+      } catch (error) {
+        console.error("Payment check error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (vnp_Amount && vnp_TransactionNo && vnp_TransactionStatus) {
+      handleCheckPayment();
+    }
+  }, [])
+
+  const handleVNPay = async (type: "rent" | "buy"): Promise<void> => {
+    try {
+      let amount = 0;
+
+      if (type === "rent") {
+        amount = cart.rent?.total || 0;
+      } else {
+        amount = 0;
+      }
+      const response = await createVNPayPayment(amount);
+
+      const redirectUrl = response.data.replace("redirect:", "").trim();
+
+      if (redirectUrl.startsWith("http")) {
+        window.location.href = redirectUrl;
+      } else {
+        callErrorAlert("Oops! Something went wrong with your payment. Please try again.");
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      callErrorAlert("Oops! Something went wrong with your payment. Please try again.");
+    };
+  }
+
   const callApiRentOrder = async () => {
     const data = getValues();
     const convertValue = {
@@ -109,9 +172,12 @@ const Step1 = ({ handleNext }: { handleNext: () => void }) => {
     if (typeof response != "string") {
       callAlert("Tạo đơn hàng thuê thành công");
       updateRentOrder(response?.id);
-      handleNext();
+
       if (payType == 2) {
         // TODO: VNPay
+        console.log("aaa", cart.rent?.total);
+        handleVNPay("rent");
+        // handleNext();
       }
     } else {
       callErrorAlert(response)
@@ -133,45 +199,55 @@ const Step1 = ({ handleNext }: { handleNext: () => void }) => {
   };
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(beforeOnSubmitProfile)}>
-        <div className="step mt-8 grid grid-cols-2">
-          {/* thông tin đặt thuê */}
-          <div className="card ">
-            <h3 className="">Thông tin đặt {tabNum == 1 ? "mua" : "thuê"}</h3>
-            <InfoRent />
-            <h3 className="mt-10">Thông tin đặt hàng</h3>
-            <InfoCheckout />
-          </div>
-          <div className="card">
-            <h3 className="">Thông tin sản phẩm</h3>
-            <CartItem isCheckout={true} />
-            {tabNum == 1 ? (<>
-              <h3 className="mt-7">Mã giảm giá</h3>
-              <ListVoucherShop />
-              <ListVoucher /></>) : (<></>)}
-            <h3 className="mt-7">Thanh toán</h3>
-            <Pay payType={payType} setPayType={setPayType} />
-          </div>
-        </div>
-        <Box sx={{ display: "flex", flexDirection: "row", pt: 2, mb: 5 }}>
-          <Link href={"/cart"}>
-            <Button color="inherit" variant="outlined" size="large">
-              Quay lại giỏ hàng
-            </Button>
-          </Link>
-          <Box sx={{ flex: "1 1 auto" }} />
+    loading ? (
+      <>
+        <h2 className="text-2xl font-semibold text-primary text-center">
+          Đang kiểm tra giao dịch của bạn
+        </h2>
 
-          <Button
-            size="large"
-            variant="contained"
-            onClick={onSubmitOrder}
-          >
-            Tạo đơn hàng
-          </Button>
-        </Box>
-      </form>
-    </FormProvider>
+        <Loading />
+      </>
+    ) : (
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(beforeOnSubmitProfile)}>
+          <div className="step mt-8 grid grid-cols-2">
+            {/* thông tin đặt thuê */}
+            <div className="card ">
+              <h3 className="">Thông tin đặt {tabNum == 1 ? "mua" : "thuê"}</h3>
+              <InfoRent />
+              <h3 className="mt-10">Thông tin đặt hàng</h3>
+              <InfoCheckout />
+            </div>
+            <div className="card">
+              <h3 className="">Thông tin sản phẩm</h3>
+              <CartItem isCheckout={true} />
+              {tabNum == 1 ? (<>
+                <h3 className="mt-7">Mã giảm giá</h3>
+                <ListVoucherShop />
+                <ListVoucher /></>) : (<></>)}
+              <h3 className="mt-7">Thanh toán</h3>
+              <Pay payType={payType} setPayType={setPayType} />
+            </div>
+          </div>
+          <Box sx={{ display: "flex", flexDirection: "row", pt: 2, mb: 5 }}>
+            <Link href={"/cart"}>
+              <Button color="inherit" variant="outlined" size="large">
+                Quay lại giỏ hàng
+              </Button>
+            </Link>
+            <Box sx={{ flex: "1 1 auto" }} />
+
+            <Button
+              size="large"
+              variant="contained"
+              onClick={onSubmitOrder}
+            >
+              Tạo đơn hàng
+            </Button>
+          </Box>
+        </form>
+      </FormProvider>
+    )
   );
 };
 

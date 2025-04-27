@@ -2,7 +2,7 @@ import axios from "axios";
 import {  IChangeToBuyOrder, IOrderStatus, IOrderStatusBuy } from "../types/order";
 import { useAuthStore } from "@/hooks/user";
 import { IUser } from "../types/user";
-import { headerAxios, port } from "../utils/env";
+import { headerAxios, port, port_other } from "../utils/env";
 import { handleError } from "./handleError";
 
 export const getDetailBuyOrder = async (orderId: number) => {
@@ -104,4 +104,44 @@ export const getOrderWithStatusService = async (status: number, profile: IUser |
   catch (error) {
     handleError(error)
   };
+};
+
+
+export const createVNPayPayment = async (amount: number) => {
+  try {
+    const response = await axios.request({
+      url: `${port_other}/api/payment/submitOrder`,
+      method: "POST",
+      params: { amount },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        ...headerAxios,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    handleError(error);
+    throw error;
+  }
+};
+
+
+export const checkVNPayPayment = async (params: { [key: string]: string }) => {
+  try {
+    const response = await axios.request({
+      url: `${port_other}/api/payment/vnpay-payment`,
+      method: "GET",
+      params,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        ...headerAxios,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    handleError(error);
+    throw error;
+  }
 };
