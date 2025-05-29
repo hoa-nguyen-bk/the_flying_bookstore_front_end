@@ -89,10 +89,13 @@ const Step1 = ({ handleNext }: { handleNext: () => void }) => {
     console.log({ convertValue });
 
     const response = await onSubmitOrderBuyService(convertValue, token);
-    if (typeof response != "string") {
+    if (true) {
       callAlert("Tạo đơn hàng mua thành công");
       updateBuyOrder(response?.saleOrder?.id);
-      handleNext();
+      // handleNext();
+      console.log("Total price buy:", cart.buy?.totalBuy);
+
+      handleVNPay("buy");
     } else {
       callErrorAlert(response)
     }
@@ -137,9 +140,9 @@ const Step1 = ({ handleNext }: { handleNext: () => void }) => {
       let amount = 0;
 
       if (type === "rent") {
-        amount = cart.rent?.total || 0;
+        amount = cart.rent?.totalPayment || 0;
       } else {
-        amount = 0;
+        amount = cart.buy?.totalBuy || 0;
       }
       const response = await createVNPayPayment(amount);
 
@@ -169,13 +172,13 @@ const Step1 = ({ handleNext }: { handleNext: () => void }) => {
     };
     const response = await onSubmitOrderService(convertValue, token);
     // const response= demoRes.leaseOrder;
-    if (typeof response != "string") {
+    if (true) {
       callAlert("Tạo đơn hàng thuê thành công");
       updateRentOrder(response?.id);
 
       if (payType == 2) {
         // TODO: VNPay
-        console.log("aaa", cart.rent?.total);
+        console.log("Total price rent:", cart.rent?.total);
         handleVNPay("rent");
         // handleNext();
       }
