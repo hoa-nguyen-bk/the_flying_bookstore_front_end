@@ -17,9 +17,14 @@ export type ICartBook = {
 }
 export type ICartRent = ICartCount & ICartBook & {
   dayRent: IFormValueDayRent;
+  totalPayment: number
 };
+
+export type ICartBuy = ICartBook & {
+  totalBuy: number | undefined
+}
 
 export type ICart = {
   rent: ICartRent | null,
-  buy: ICartBook | null
+  buy: ICartBuy | null
 }
