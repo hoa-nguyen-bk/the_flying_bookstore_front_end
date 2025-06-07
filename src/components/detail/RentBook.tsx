@@ -11,7 +11,7 @@ import { IPropsBook } from "./DocumentInfo";
 import { calPercentPromotion, formatCurrency } from "@/utils/helps";
 import { CiShoppingCart } from "react-icons/ci";
 import { Alert, Chip } from "@mui/material";
-import { ICart, ICartBook } from "../../types/cart";
+import { ICart, ICartBook, ICartBuy } from "../../types/cart";
 import { useStoreCart } from "../../hooks/cart";
 import { useRouter } from "next/navigation";
 import { useStoreStep } from "../../hooks/step";
@@ -25,8 +25,9 @@ const RentBook = ({ book }: IPropsBook) => {
 
   const handleAddToCartBuy = () => {
     if (!book?.id) return;
-    const submitCart: ICartBook = {
+    const submitCart: ICartBuy = {
       bookId: book.id,
+      totalBuy: book.price
     };
     changeTabNum(1)
     addToCart(submitCart);

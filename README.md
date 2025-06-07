@@ -2,23 +2,9 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Link demo hệ thống: 
 - Link người dùng
-[The Flying Bookstore demo](https://the-flying-bookstore.vercel.app/)
+[The Flying Bookstore demo](https://the-flying-bookstore-front-end.vercel.app/)
 - Link admin:
 [The Flying Bookstore Dashboard demo](https://the-flying-bookstore-dashboard-fe.vercel.app/)
-
-## Video thuyết trình Bảo vệ luận văn tốt nghiệp:
-[Only 10 phút, click vào đây](https://youtu.be/u2odpuOnYXM?si=bDP40r_lyNHou5Vz)
-
-## Slide bảo vệ luận văn
-[Slide](https://www.canva.com/design/DAGaTryMbeo/dhtiewJRc8LQIwYTFBWGKg/edit?utm_content=DAGaTryMbeo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
-
-## Báo cáo luận văn
-[Báo cáo docx, pdf và phiếu chấm điểm luôn](https://github.com/hoa-nguyen-bk/report-final-project)
-
-## Tặng các bạn link các buổi phản biện và bảo vệ của các nhóm khác:
-[Danh sách record bảo vệ và phản biện](https://www.youtube.com/watch?v=mRBKgb8Xkqk&list=PL8cNucQ_sYRMHg8cbBJXI0oW_-90JdvAv)
-
-
 
 ## Getting Started
 

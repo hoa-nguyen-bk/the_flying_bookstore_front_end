@@ -17,10 +17,13 @@ import { useStoreCart } from "@/hooks/cart";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../hooks/user";
 import { useStoreStep } from "../../hooks/step";
+import { calculateTotalPriceAfterVoucher } from "../cart/voucherSession/calculateVoucher";
+import { useStoreVoucher } from "@/hooks/voucher";
 
 const tomorrow = dayjs().add(1, "day");
 const RentDay = ({ book }: IPropsBook) => {
   const { changeTabNum } = useStoreStep();
+  const { voucher, voucherShop } = useStoreVoucher();
   const { handleSubmit, control, watch } = useForm<IFormValueDayRent>({
     defaultValues: {
       dateStart: dayjs(),
@@ -57,6 +60,7 @@ const RentDay = ({ book }: IPropsBook) => {
       total: renderCountTotal(),
       totalRent: renderTotalRent(),
       duration: renderDurationRent(),
+      totalPayment: calculateTotalPriceAfterVoucher(book, voucher, voucherShop)
     };
     changeTabNum(0)
     addToCart(submitCart);

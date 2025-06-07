@@ -15,6 +15,8 @@ import { getDetailRentOrder, updateStatusOrder } from "../../api/order";
 import { useAuthStore } from "../../hooks/user";
 import { useStoreAlert } from "../../hooks/alert";
 import { useStoreStep } from "../../hooks/step";
+import dayjs from "dayjs";
+import { sendReceiptEmail } from "@/api/email";
 
 const Step2 = ({
   handleNext,
@@ -24,7 +26,7 @@ const Step2 = ({
   const { rentOrderId } = useStoreOrder();
   const [orderDetail, setOrderDetail] = useState<IRentOrder>();
   const { href: currentUrl } = useUrl() ?? {};
-  const { token } = useAuthStore()
+  const { token, profile } = useAuthStore()
   const { tabNum } = useStoreStep();
   const { callAlert, callErrorAlert } = useStoreAlert(state => state);
   const getOrder = async () => {
@@ -151,6 +153,50 @@ const Step2 = ({
         >
           Xác nhận lấy hàng
         </Button>
+
+        {orderDetail?.leaseOrder?.status === "PAYMENT_SUCCESS" && (
+          <Button
+            variant="outlined"
+            sx={{ textTransform: "none" }}
+            size="large"
+            onClick={async () => {
+              if (!orderDetail) return;
+
+              const orderEmailPayload = {
+                id: orderDetail?.leaseOrder?.id ?? 0,
+                lessorName: `${orderDetail?.lessor?.lastName ?? ""} ${orderDetail?.lessor?.firstName ?? ""}`,
+                phoneNumber: orderDetail?.lessor?.phoneNumber ?? "",
+                lessorAddress: orderDetail?.leaseOrder?.lessorAddress ?? "",
+                createdDate: orderDetail?.leaseOrder?.createdDate ?? "",
+                fromDate: orderDetail?.leaseOrder?.fromDate ?? "",
+                toDate: orderDetail?.leaseOrder?.toDate ?? "",
+                duration: (() => {
+                  const firstDayEnd = orderDetail?.leaseOrder?.toDate;
+                  const dateStart = orderDetail?.leaseOrder?.fromDate;
+                  const dateEnd = dayjs(firstDayEnd).add(1, "day");
+                  if (!dateStart || !dateEnd) return 0;
+                  const duration = dateEnd.diff(dateStart, "day");
+                  return duration > 0 ? duration : 0;
+                })(),
+                paymentMethod: orderDetail?.leaseOrder?.paymentMethod ?? "",
+                totalLeaseFee: orderDetail?.leaseOrder?.totalLeaseFee ?? 0,
+                totalDeposit: orderDetail?.leaseOrder?.totalDeposit ?? 0,
+                buyerEmail: profile?.email ?? ""
+              };
+              console.log(orderEmailPayload);
+
+              try {
+                await sendReceiptEmail(orderEmailPayload);
+                console.log(orderEmailPayload);
+                callAlert("Đã gửi biên lai điện tử qua email thành công!");
+              } catch (error) {
+                callErrorAlert("Gửi email thất bại!");
+              }
+            }}
+          >
+            Gửi biên lai qua email
+          </Button>
+        )}
       </div>
     </>
   );
