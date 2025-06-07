@@ -44,7 +44,7 @@
     "zustand": "https://pkg.csb.dev/pmndrs/zustand/commit/992cedd4/zustand"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^20.17.30",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-slick": "^0.23.13",

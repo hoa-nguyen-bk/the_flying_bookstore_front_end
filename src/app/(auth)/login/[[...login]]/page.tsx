@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Background from "@/assets/images/background.jpg";
-import { Button, Slide, SlideProps } from "@mui/material";
+import { Button, Slide, SlideProps, Divider} from "@mui/material";
 import Link from "next/link";
 import FormLogin from "@/components/auth/FormLogin";
 import "./../Login.scss";
@@ -14,12 +14,29 @@ import { handleFormSubmitService } from "@/api/auth/loginService";
 import { useStoreAlert } from "../../../../hooks/alert";
 import { getProfile } from "../../../../api/profile";
 
+import { signIn } from "next-auth/react";
+import GoogleButton from "@/components/auth/GoogleButton";
+import GoogleIcon from "@/components/icons/GoogleIcon";
+
 
 const Login = () => {
   const [formData, setFormData] = useState({} as IUserLogin);
   const { callAlert, callErrorAlert } = useStoreAlert();
   const router = useRouter();
   const { setToken } = useAuthStore();
+
+  // 2. Add Google login handler
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signIn("google", { callbackUrl: "/" });
+      if (result?.error) {
+        callErrorAlert(result.error);
+      }
+    } catch (error) {
+      callErrorAlert("Đăng nhập bằng Google thất bại");
+    }
+  };
+
   const callApiProfile = async (token: string) => {
     try {
       const data = await getProfile(token, setToken);
@@ -66,6 +83,26 @@ const Login = () => {
           >
             Đăng nhập
           </Button>
+
+          <Divider sx={{ my: 2 }}>Hoặc</Divider>
+
+          <Button
+            variant="outlined"
+            onClick={handleGoogleLogin}
+            startIcon={<GoogleIcon />}
+            sx={{ 
+              color: '#4285F4',
+              borderColor: '#4285F4',
+              '&:hover': {
+                borderColor: '#357ABD',
+                backgroundColor: 'rgba(66, 133, 244, 0.04)'
+              }
+            }}
+            fullWidth
+          >
+            Đăng nhập bằng Google
+          </Button>
+
           <div className="flex">
             <p className="text-gray-500">Không có tài khoản?</p>
             <Link href="/sign-up">
